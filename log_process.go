@@ -1,21 +1,25 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"io"
+	"os"
 	"strings"
+	"time"
 )
 
 // 定义接口
 type Reader interface {
-	Read(rc chan<- string)
+	Read(rc chan<- []byte)
 }
 type Writer interface {
-	Write(wc <-chan string)
+	Write(wc <-chan []byte)
 }
 
 type LogProcess struct {
-	rc    chan string
-	wc    chan string
+	rc    chan []byte
+	wc    chan []byte
 	read  Reader
 	write Writer
 }
@@ -24,24 +28,38 @@ type ReadFromFile struct {
 	path string // 日志文件的路径
 }
 
-func (r *ReadFromFile) Read(rc chan<- string) {
-	line := "message"
-	rc <- line
+func (r *ReadFromFile) Read(rc chan<- []byte) {
+	f, err := os.Open(r.path)
+	if err != nil {
+		panic(fmt.Sprintf("open file error: %s", err.Error()))
+	}
+	f.Seek(0, 2) // 文件指针移动到末尾
+	rd := bufio.NewReader(f)
+	for {
+		line, err := rd.ReadBytes('\n')
+		if err == io.EOF {
+			time.Sleep(500 * time.Millisecond)
+			continue
+		}
+		rc <- line[:len(line)-1]
+	}
 }
 
 type WriteToInfluxDB struct {
 	influxDBDsn string // influxdb data source
 }
 
-func (w *WriteToInfluxDB) Write(wc <-chan string) {
-	dd := <-wc
-	fmt.Println(dd)
+func (w *WriteToInfluxDB) Write(wc <-chan []byte) {
+	for v := range wc {
+		fmt.Println(v)
+	}
 }
 
 // 解析模块
 func (l *LogProcess) Process() {
-	data := <-l.rc
-	l.wc <- strings.ToUpper(data)
+	for data := range l.rc {
+		l.wc <- []byte(strings.ToUpper(string(data)))
+	}
 }
 
 func main() {
@@ -52,8 +70,8 @@ func main() {
 		influxDBDsn: "username&password",
 	}
 	lp := &LogProcess{
-		rc:    make(chan string),
-		wc:    make(chan string),
+		rc:    make(chan []byte),
+		wc:    make(chan []byte),
 		read:  r,
 		write: w,
 	}
