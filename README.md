@@ -197,3 +197,45 @@ func main() {
 - 打开文件;
 - 从文件末尾开始逐行读取;
 - 写入到ReadChan
+
+### 3. 解析模块:
+- 从Read Channel中读取每行日志的数据;
+- 使用正则提取监控数据(path, status, methods);
+- 写入Write Channel;
+
+### 4. 写入模块的实现:
+- 初始化influxdb client;
+- 从write Channel中读取数据;
+- 构造数据并写入influxdb;
+
+##### influxdb:
+influxdb是一个开源分布式时序、时间和指标数据库，使用 Go 语言编写，无需外部依赖。
+应用：性能监控，应用程序指标，物联网传感器数据和实时分析等的后端存储。
+- docker 安装:
+```shell
+docker pull influxdb
+docker run -d -p 8086:8086 -v influxd1:/var/lib/influxd -v influxd2:/var/lib/influxd2 -e DOCKER_INFLUXDB_INIT_MODE=upgrade -e DOCKER_INFLUXDB_INIT_USERNAME=admin -e DOCKER_INFLUXDB_INIT_PASSWORD=admin123 -e DOCKER_INFLUXDB_INIT_ORG=my-org -e DOCKER_INFLUXDB_INIT_BUCKET=my-bucket influxdb
+```
+![](./Doc/images/02_influxdb.jpg)
+
+### 5. 日志监控系统：
+#### 5.1 分析监控需求：
+某个协议下的某个请求在某个请求方法的QPS&响应时间&流量
+Tag: path, methods, Scheme, status
+Fields: upstream, requestTime, bytesSent
+Time: TimeLocal
+##### 5.2 实现:
+influxdb: [influxdb](https://github.com/influxdata/influxdb)
+influxdb客户端:[influxdb客户端](https://github.com/influxdata/influxdb-client-go)
+
+
+##### 5.3 绘制监控图:
+- 用grafana;
+
+#### 6.监控模块的实现:
+- 总处理日志行数;
+- 系统吞吐量;
+- read channel长度;
+- write channel长度;
+- 运行总时间;
+- 错误数;
