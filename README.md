@@ -211,6 +211,7 @@ func main() {
 ##### influxdb:
 influxdb是一个开源分布式时序、时间和指标数据库，使用 Go 语言编写，无需外部依赖。
 应用：性能监控，应用程序指标，物联网传感器数据和实时分析等的后端存储。
+docker hub: [https://hub.docker.com/_/influxdb](https://hub.docker.com/_/influxdb)
 - docker 安装:
 ```shell
 docker pull influxdb
