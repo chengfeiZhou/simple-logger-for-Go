@@ -217,10 +217,10 @@ docker pull influxdb
 docker run -d -p 8086:8086 -v influxd1:/var/lib/influxd -v influxd2:/var/lib/influxd2 -e DOCKER_INFLUXDB_INIT_MODE=upgrade -e DOCKER_INFLUXDB_INIT_USERNAME=admin -e DOCKER_INFLUXDB_INIT_PASSWORD=admin123 -e DOCKER_INFLUXDB_INIT_ORG=my-org -e DOCKER_INFLUXDB_INIT_BUCKET=my-bucket influxdb
 ```
 ps: 
-`DOCKER_INFLUXDB_INIT_USERNAME`: 为系统初始超级用户设置的用户名(必需);
-`DOCKER_INFLUXDB_INIT_PASSWORD`: 为系统初始超级用户设置的密码(必需);
-`DOCKER_INFLUXDB_INIT_ORG`: 为系统的初始组织设置的名称(必需);
-`DOCKER_INFLUXDB_INIT_BUCKET`: 为系统的初始存储桶设置的名称(必需);
+- `DOCKER_INFLUXDB_INIT_USERNAME`: 为系统初始超级用户设置的用户名(必需);
+- `DOCKER_INFLUXDB_INIT_PASSWORD`: 为系统初始超级用户设置的密码(必需);
+- `DOCKER_INFLUXDB_INIT_ORG`: 为系统的初始组织设置的名称(必需);
+- `DOCKER_INFLUXDB_INIT_BUCKET`: 为系统的初始存储桶设置的名称(必需);
 
 ![](./Doc/images/02_influxdb.jpg)
 
